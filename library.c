@@ -9,11 +9,7 @@
 #include <termios.h>
 #include "library.h"
 #include "iso_font.h"
-/*
-TODO:
-~~~1. Print string~~~
-2. Fix clear screen
-*/
+
 int graphics_device;
 struct fb_var_screeninfo varInfo;
 struct fb_fix_screeninfo fixInfo;
@@ -24,56 +20,46 @@ static struct termios oldt, newt;
 
 
 int init_graphics(){
-printf("Init graphics\n");
-printf("Opening graphics device\n");
+//open frame buffer
 graphics_device = open("/dev/fb0",O_RDWR);
 
 if(graphics_device == -1){
-	printf("Graphics Device failed to opened\n");
+	//check is frame buffer opened successfully
 	return 1;
 }
-else{
-	printf("Graphics device opened\n");
-}
 
-printf("Getting Screen Info\n");
-//get var size
-
+//get screen info
+//get variable screen size
 ioctl(graphics_device, FBIOGET_VSCREENINFO ,&varInfo);
-printf("varInfo: %d\n", varInfo.yres_virtual);
+//get fixed screen info
 ioctl(graphics_device, FBIOGET_FSCREENINFO, &fixInfo);
-printf("fixInfo: %d\n", fixInfo.line_length);
-
-printf("Mmap screen info\n");
-
+//mmap frame buffer into file
 screen =(char*) mmap(NULL, varInfo.yres_virtual * 
 fixInfo.line_length, PROT_READ | PROT_WRITE, MAP_SHARED, 
 graphics_device, 0);
 
 if(screen == MAP_FAILED){
-printf("Memory Map not work\n");
+//memory map failed
 return 1;
 }
 
 
-printf("ioctl() syscall\n\n");
+//remove canonical mode of terminal
 
-
-printf("Remove Canonical Mode\n");
 //terminal won't wait for new line to read key
-tcgetattr(0,&oldt);
+tcgetattr(0,&oldt); //save canonical settings
 newt = oldt;
 
-newt.c_lflag &= ~(ECHO | ICANON);
-//newt.c_lflag &= ~(ICANON);
+newt.c_lflag &= ~(ECHO | ICANON); //remove key echo and waiting for new 
+//line
+//apply new settings
 tcsetattr(0, TCSANOW, &newt);
 
-
-printf("Add set select listening\n");
+//listen for user input for getKey
 FD_ZERO(&fileSet);
 FD_SET(0,&fileSet);
 
-printf("Set select timeout\n");
+//set select timeout
 timeOut.tv_sec = 0;
 timeOut.tv_usec = 0;
 
@@ -83,30 +69,28 @@ return 0;
 }
 
 int exit_graphics(){
-printf("exit graphics\n");
-printf("Closing graphics device\n");
-if(close(graphics_device) == 0){
-printf("Graphics device closed\n");
+//close frame buffer
+
+if(close(graphics_device) != 0){
+	//frame buffer didn't properly close
+	return 1;
 }
 
 
-printf("munmap() memory\n");
+//unmap frame buffer
 if(munmap(screen, varInfo.yres_virtual * fixInfo.line_length) == -1){
-	printf("Unmap Error\n");
+	//unmap error
 	return 1;
 }
 
 
 
-printf("Renable keys with ioctl\n\n");
 
-printf("Set input listening\n");
-
+//remove select listening
 FD_ZERO(&fileSet);
 
 
-printf("Restore cannonical mode");
-
+//restor canonical mode: key echoes and new line wait restored
 tcsetattr(0, TCSANOW, &oldt);
 
 
@@ -114,40 +98,24 @@ return 0;
 }
 
 int sleep_ms(long ms){
-	//need struct timespec w/ tv_nsec field (long)
-//	const struct timespec sleepTime;
+	//set sleep times
 	struct timespec sleepTime;
 	sleepTime.tv_nsec = ms * 1000000;
 	sleepTime.tv_sec = 0;
 	return nanosleep(&sleepTime, NULL);
 
-
 }
 
 char getKey(){
-
+//tell select to listen to stdin
 FD_ZERO(&fileSet);
 FD_SET(0,&fileSet);
-/*int selRes = select(1,&fileSet,NULL,NULL,&
-timeOut);
-
-
-if(selRes){
-printf("select value: %d\n",selRes);
-}*/
-
-//input = 0
 
 if(select(1,&fileSet,NULL,NULL, &timeOut) == 1){
 	char key[1];
-	/*if(read(0,key,1)==1){
-		printf("Key pressed: %c\n", key);
-		//return key;
-	}*/
-	
+	//return key if pressed	
 	if(read(0,&key,1)){
-	//printf("Key pressed %c\n", key[0]);
-	return key[0];
+		return key[0];
 	}
 }
 
@@ -194,47 +162,29 @@ void draw_char(int x, int y, const char text, color_t color){
 		//move down line with each iteration of k
 		
 		//grab index
-		//unsigned char row = iso_font[index+k];
 		unsigned char row = iso_font[k];
-		//printf("Row %d: %x\n", k, row);
 		//perform mask
-		//get every bit
+		//get every bit from left to right
 		int row_x = x;
 		int bitLen = 8;
 		int j;
-		//unsigned char mask = 1<<7;
 		unsigned char mask = 1;
 		for(j = 0; j < bitLen; j++){
 			//perform masking
-			//char is_colored = (mask & row) >> (bitLen-1) - 
-			//j;
 			char is_colored = (mask & row) << (bitLen-1)-j;
 				if(is_colored){
-				//printf("is colored: %d\n",is_colored);
 				draw_pixel(row_x,y,color);
 			}
-			//shift
-			//mask = mask >> 1;
+			//shift bit to the next one
 			mask = mask << 1;
-			//draw pixel
 			//increment x
 			row_x++;
 		}
 		//increment y;
 		y++;
-		//printf("End row\n");
-		/*
-		1. start with 00000001
-		2. mask and get bit value
-		3. draw pixel
-		4. x++
-		5. shift mask value left
-		6.end of row y++
-		*/
 		
 		
 		
-		//
 		
 		
 	}
@@ -242,7 +192,9 @@ void draw_char(int x, int y, const char text, color_t color){
 }
 
 void draw_text(int x, int y, const char *text, color_t c){
-
+	//draw character 
+	//move the the right one width of a character
+	//draw next character
 	int i;
 	for(i=0; text[i] != '\0'; i++){
 		draw_char(x,y,text[i],c);
