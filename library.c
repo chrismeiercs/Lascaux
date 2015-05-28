@@ -3,6 +3,7 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
+#include <time.h>
 #include <linux/fb.h>
 #include "library.h"
 
@@ -69,4 +70,9 @@ if(munmap(screen, varInfo.yres_virtual * fixInfo.line_length) == -1){
 printf("Renable keys with ioctl\n\n");
 
 return 0;
+}
+
+int sleep_ms(long ms){
+	//need struct timespec w/ tv_nsec field (long)
+	return nanosleep(req, NULL);
 }
