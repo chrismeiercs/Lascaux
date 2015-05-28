@@ -3,7 +3,13 @@
 
 int main(void){
 
-init_graphics();
-exit_graphics();
+if(init_graphics()){
+printf("Graphics Initialized");
+
+}
+if(exit_graphics()){
+printf("Graphics Closed");
+
+}
 return 0;
 }

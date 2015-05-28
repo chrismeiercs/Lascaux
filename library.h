@@ -3,8 +3,8 @@
 
 typedef unsigned short color_t;
 
-void init_graphics();
-void exit_graphics();
+int init_graphics();
+int exit_graphics();
 void clear_screen();
 char getkey();
 void sleep_ms(long ms);
