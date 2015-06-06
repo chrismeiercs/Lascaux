@@ -3,6 +3,9 @@
 
 int main(void){
 
+
+
+
 if(init_graphics()){
 printf("Graphics Initialized");
 
@@ -21,6 +24,8 @@ if(keyPressed == 'a'){
 while(keyPressed != 'q');
 */
 
+
+
 int x = 0;
 int y = 0;
 int run = 1;
@@ -35,7 +40,7 @@ int run = 1;
 		else if(key == 'w'){
 			x += 10;
 			printf("X: %d\nY: %d\n\n", x, y);
-
+			//printf("sleep return : %d\n",sleep_ms(20));
 		}
 		else if(key == 's'){
 			x -= 10;
@@ -50,6 +55,10 @@ int run = 1;
 		else if(key == 'd'){
 			y += 10;
 			printf("X: %d\nY: %d\n\n", x, y);
+		}
+		else if(key == 'b'){
+			printf("draw rect\n");
+			sleep_ms(20);
 		}
 		
 

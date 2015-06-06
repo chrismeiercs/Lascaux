@@ -108,16 +108,23 @@ tcsetattr(0, TCSANOW, &oldt);
 return 0;
 }
 
-/*int sleep_ms(long ms){
+int sleep_ms(long ms){
 	//need struct timespec w/ tv_nsec field (long)
-	return nanosleep(req, NULL);
-}*/
+//	const struct timespec sleepTime;
+	struct timespec sleepTime;
+	sleepTime.tv_nsec = ms * 1000000;
+	sleepTime.tv_sec = 0;
+	return nanosleep(&sleepTime, NULL);
+
+
+}
 
 char getKey(){
 
 FD_ZERO(&fileSet);
 FD_SET(0,&fileSet);
-/*int selRes = select(1,&fileSet,NULL,NULL,&timeOut);
+/*int selRes = select(1,&fileSet,NULL,NULL,&
+timeOut);
 
 
 if(selRes){
@@ -140,3 +147,4 @@ if(select(1,&fileSet,NULL,NULL, &timeOut) == 1){
 }
 
 }
+
