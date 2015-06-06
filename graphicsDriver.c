@@ -21,14 +21,43 @@ if(keyPressed == 'a'){
 while(keyPressed != 'q');
 */
 
-while(1){
+int x = 0;
+int y = 0;
+int run = 1;
+	while(run){
 
-getKey();
+		char key = getKey();
 
-}
+		if(key == 'q'){
+			exit_graphics();
+			run = 0;
+		}
+		else if(key == 'w'){
+			x += 10;
+			printf("X: %d\nY: %d\n\n", x, y);
+
+		}
+		else if(key == 's'){
+			x -= 10;
+			printf("X: %d\nY: %d\n\n", x, y);
+
+		}
+		else if(key == 'a'){
+			y -= 10;
+			printf("X: %d\nY: %d\n\n", x, y);
+		
+		}
+		else if(key == 'd'){
+			y += 10;
+			printf("X: %d\nY: %d\n\n", x, y);
+		}
+		
+
+	}
+/*
 if(exit_graphics()){
 printf("Graphics Closed");
+*/
 
-}
 return 0;
 }

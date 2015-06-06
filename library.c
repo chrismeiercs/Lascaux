@@ -12,7 +12,7 @@
 int graphics_device;
 struct fb_var_screeninfo varInfo;
 struct fb_fix_screeninfo fixInfo;
-void *screen;
+char *screen;
 fd_set fileSet;
 struct timeval timeOut;
 static struct termios oldt, newt;
@@ -41,7 +41,7 @@ printf("fixInfo: %d\n", fixInfo.line_length);
 
 printf("Mmap screen info\n");
 
-screen = mmap(NULL, varInfo.yres_virtual * 
+screen =(char*) mmap(NULL, varInfo.yres_virtual * 
 fixInfo.line_length, PROT_READ | PROT_WRITE, MAP_SHARED, 
 graphics_device, 0);
 
@@ -53,7 +53,7 @@ return 1;
 
 printf("ioctl() syscall\n\n");
 
-/*
+
 printf("Remove Canonical Mode\n");
 
 tcgetattr(0,&oldt);
@@ -62,7 +62,7 @@ newt = oldt;
 newt.c_lflag &= ~(ICANON);
 
 tcsetattr(0, TCSANOW, &newt);
-*/
+
 
 printf("Add set select listening\n");
 FD_ZERO(&fileSet);
@@ -99,11 +99,11 @@ printf("Set input listening\n");
 
 FD_ZERO(&fileSet);
 
-/*
+
 printf("Restore cannonical mode");
 
 tcsetattr(0, TCSANOW, &oldt);
-*/
+
 
 return 0;
 }
@@ -113,7 +113,7 @@ return 0;
 	return nanosleep(req, NULL);
 }*/
 
-void getKey(){
+char getKey(){
 
 FD_ZERO(&fileSet);
 FD_SET(0,&fileSet);
@@ -134,7 +134,8 @@ if(select(1,&fileSet,NULL,NULL, &timeOut) == 1){
 	}*/
 	
 	if(read(0,&key,1)){
-	printf("Key pressed %c\n", key[0]);
+	//printf("Key pressed %c\n", key[0]);
+	return key[0];
 	}
 }
 
