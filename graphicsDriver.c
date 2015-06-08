@@ -58,6 +58,7 @@ int run = 1;
 		}
 		else if(key == 'b'){
 			printf("draw rect\n");
+			draw_pixel(20,20,20);
 			sleep_ms(20);
 		}
 		

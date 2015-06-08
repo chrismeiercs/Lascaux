@@ -21,7 +21,7 @@ static struct termios oldt, newt;
 int init_graphics(){
 printf("Init graphics\n");
 printf("Opening graphics device\n");
-graphics_device = open("/dev/fb0",O_RDWR | O_APPEND);
+graphics_device = open("/dev/fb0",O_RDWR);
 
 if(graphics_device == -1){
 	printf("Graphics Device failed to opened\n");
@@ -148,3 +148,9 @@ if(select(1,&fileSet,NULL,NULL, &timeOut) == 1){
 
 }
 
+
+void draw_pixel(int x, int y, color_t color){
+	long int offset = (fixInfo.line_length * y) + x;
+	*(screen + offset) = color;
+
+}
