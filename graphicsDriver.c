@@ -66,7 +66,10 @@ int run = 1;
 			draw_rect(20,20,20,20,20);
 			sleep_ms(20);
 		}
-
+		else if(key == 'c'){
+			clear_screen();
+			//must press 'c' twice to clear screen
+		}
 	}
 /*
 if(exit_graphics()){

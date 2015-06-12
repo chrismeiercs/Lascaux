@@ -171,3 +171,8 @@ void draw_rect(int x1, int y1, int width, int height, color_t color){
 
 
 }
+
+void clear_screen(){
+
+	write(1, "\033[2J",1);
+}
