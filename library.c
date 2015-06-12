@@ -154,3 +154,20 @@ void draw_pixel(int x, int y, color_t color){
 	*(screen + offset) = color;
 
 }
+
+void draw_rect(int x1, int y1, int width, int height, color_t color){
+
+	int i; //x counter
+	int k; //y counter
+	
+	for(i = x1; i < (x1 + width); i++){
+	
+		for (k = y1; k < (y1 + height); k++){
+			draw_pixel(i,k,color);
+		}
+	
+	}
+	
+
+
+}

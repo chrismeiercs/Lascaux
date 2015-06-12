@@ -62,6 +62,10 @@ int run = 1;
 			sleep_ms(20);
 		}
 		
+		else if(key == 'r'){
+			draw_rect(20,20,20,20,20);
+			sleep_ms(20);
+		}
 
 	}
 /*
