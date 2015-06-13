@@ -9,7 +9,11 @@
 #include <termios.h>
 #include "library.h"
 #include "iso_font.h"
-
+/*
+TODO:
+1. Print string
+2. Fix clear screen
+*/
 int graphics_device;
 struct fb_var_screeninfo varInfo;
 struct fb_fix_screeninfo fixInfo;
