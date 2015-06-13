@@ -8,6 +8,7 @@
 #include <linux/fb.h>
 #include <termios.h>
 #include "library.h"
+#include "iso_font.h"
 
 int graphics_device;
 struct fb_var_screeninfo varInfo;
@@ -175,4 +176,60 @@ void draw_rect(int x1, int y1, int width, int height, color_t color){
 void clear_screen(){
 
 	write(1, "\033[2J",1);
+}
+
+void draw_char(int x, int y, const char text, color_t color){
+
+	int index = text * 16;
+	int finalIndex = text * 16 + 15;
+	int start_x = x;
+	int start_y = y;
+	
+	int k ;
+	for(k = index; k < finalIndex;k++){
+		//move down line with each iteration of k
+		
+		//grab index
+		//unsigned char row = iso_font[index+k];
+		unsigned char row = iso_font[k];
+		//printf("Row %d: %x\n", k, row);
+		//perform mask
+		//get every bit
+		int row_x = x;
+		int bitLen = 8;
+		int j;
+		unsigned char mask = 1<<7;
+		for(j = 0; j < bitLen; j++){
+			//perform masking
+			char is_colored = (mask & row) >> (bitLen-1) - 
+			j;
+				if(is_colored){
+				//printf("is colored: %d\n",is_colored);
+				draw_pixel(row_x,y,color);
+			}
+			//shift
+			mask = mask >> 1;
+			//draw pixel
+			//increment x
+			row_x++;
+		}
+		//increment y;
+		y++;
+		//printf("End row\n");
+		/*
+		1. start with 00000001
+		2. mask and get bit value
+		3. draw pixel
+		4. x++
+		5. shift mask value left
+		6.end of row y++
+		*/
+		
+		
+		
+		//
+		
+		
+	}
+
 }

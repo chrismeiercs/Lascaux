@@ -70,6 +70,10 @@ int run = 1;
 			clear_screen();
 			//must press 'c' twice to clear screen
 		}
+		else if(key == 'm'){
+			draw_char(20,20,'A',20);
+			sleep_ms(20);
+		}
 	}
 /*
 if(exit_graphics()){
