@@ -71,7 +71,8 @@ int run = 1;
 			//must press 'c' twice to clear screen
 		}
 		else if(key == 'm'){
-			draw_char(20,20,'A',20);
+			//draw_char(20,20,'A',20);
+			draw_text(20,20,"hello world",20);
 			sleep_ms(20);
 		}
 	}

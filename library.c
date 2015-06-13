@@ -210,17 +210,20 @@ void draw_char(int x, int y, const char text, color_t color){
 		int row_x = x;
 		int bitLen = 8;
 		int j;
-		unsigned char mask = 1<<7;
+		//unsigned char mask = 1<<7;
+		unsigned char mask = 1;
 		for(j = 0; j < bitLen; j++){
 			//perform masking
-			char is_colored = (mask & row) >> (bitLen-1) - 
-			j;
+			//char is_colored = (mask & row) >> (bitLen-1) - 
+			//j;
+			char is_colored = (mask & row) << (bitLen-1)-j;
 				if(is_colored){
 				//printf("is colored: %d\n",is_colored);
 				draw_pixel(row_x,y,color);
 			}
 			//shift
-			mask = mask >> 1;
+			//mask = mask >> 1;
+			mask = mask << 1;
 			//draw pixel
 			//increment x
 			row_x++;
@@ -244,4 +247,13 @@ void draw_char(int x, int y, const char text, color_t color){
 		
 	}
 
+}
+
+void draw_text(int x, int y, const char *text, color_t c){
+
+	int i;
+	for(i=0; text[i] != '\0'; i++){
+		draw_char(x,y,text[i],c);
+		x+=16;
+	}
 }
