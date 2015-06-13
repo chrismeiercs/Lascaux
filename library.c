@@ -56,12 +56,12 @@ printf("ioctl() syscall\n\n");
 
 
 printf("Remove Canonical Mode\n");
-
+//terminal won't wait for new line to read key
 tcgetattr(0,&oldt);
 newt = oldt;
 
-newt.c_lflag &= ~(ICANON);
-
+newt.c_lflag &= ~(ECHO | ICANON);
+//newt.c_lflag &= ~(ICANON);
 tcsetattr(0, TCSANOW, &newt);
 
 
@@ -174,8 +174,16 @@ void draw_rect(int x1, int y1, int width, int height, color_t color){
 }
 
 void clear_screen(){
+	//enter canonical so will be echoed
 
-	write(1, "\033[2J",1);
+	//tcsetattr(0, TCSANOW, &oldt);
+	//printf("Entered Cannonical Mode\n");
+	write(1, "\033[2J",sizeof(char));
+	
+	//printf("\033[2J");
+	//exit canonical mode again
+	//tcsetattr(0, TCSANOW, &newt);
+	//printf("Exited Canonical Mode\n");
 }
 
 void draw_char(int x, int y, const char text, color_t color){
